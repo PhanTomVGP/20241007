@@ -12,10 +12,14 @@ public class PlayerController : MonoBehaviour
     private float yStore;
     public float rotateSpeed = 10f;
     public Animator anim;
+    public GameObject jumpParticle,landingParticle;
+    private bool lastGrounded;
     
     void Start()
     {
         cam = FindObjectOfType<CameraController>();
+        lastGrounded = true;
+        charCon.Move(new Vector3(0f, Physics.gravity.y * gravityScale * Time.deltaTime, 0f));
     }
     
     void Update()
@@ -46,11 +50,19 @@ public class PlayerController : MonoBehaviour
 
         if (charCon.isGrounded)
         {
+            jumpParticle.SetActive(false);
+            if (!lastGrounded)
+            {
+                landingParticle.SetActive(true);
+            }
             if (Input.GetButtonDown("Jump"))
             {
                 moveAmount.y = jumpForce;
+                jumpParticle.SetActive(true);
             }
         }
+
+        lastGrounded = charCon.isGrounded;
         
         charCon.Move(new Vector3(moveAmount.x * moveSpeed, moveAmount.y, moveAmount.z * moveSpeed) * Time.deltaTime);
 
