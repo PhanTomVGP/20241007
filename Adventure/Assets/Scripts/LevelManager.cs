@@ -14,6 +14,8 @@ public class LevelManager : MonoBehaviour
     private PlayerController player;
     public Vector3 respawnPoint;
 
+    private CameraController cam;
+
     private void Awake()
     {
         if (instance == null)
@@ -31,12 +33,15 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    IEnumerator ReSpawnCo()
+    public IEnumerator ReSpawnCo()
     {
         player.gameObject.SetActive(false);
+        UIController.instance.FadeToBlack();
         yield return new WaitForSeconds(waitBeforeRespawning);
         player.transform.position = respawnPoint;
+        cam.SnapToTarget();
         player.gameObject.SetActive(true);
+        UIController.instance.FadeFromBlack();
         respawning = false;
     }
 
@@ -44,7 +49,11 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
         player = FindObjectOfType<PlayerController>();
-        respawnPoint = player.transform.position;
+        respawnPoint = player.transform.position + Vector3.up;
+
+        cam = FindObjectOfType<CameraController>();
+        
+        UIController.instance.FadeFromBlack();
     }
 
     // Update is called once per frame
